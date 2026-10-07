@@ -28,6 +28,7 @@ const PRESETS = {
   total: { pos: [11, 13, 17], target: [-1.3, 0.6, 1.5] },
   back: { pos: [3.6, 3.4, 11.5], target: [-1.3, 0.8, 2] },
   top: { pos: [-1.4, 22, 1.7], target: [-1.4, 0, 1.5] },
+  hero: { pos: [8.5, 8.5, 13], target: [-1.3, 0.5, 1.2] },
 }
 
 /* fixed scene anchors (stable identities so R3F does not re-apply them) */
@@ -318,7 +319,7 @@ function DangerCar({ active, onHit }) {
   )
 }
 
-function Scene({ step, danger, preset, onHit }) {
+function Scene({ step, danger, preset, onHit, autoRotate = false, labels = true }) {
   const controlsRef = useRef()
   const personsOut = step >= 3
   const evacTargets = danger ? DANGER_EVAC : SAFE_EVAC
@@ -344,6 +345,9 @@ function Scene({ step, danger, preset, onHit }) {
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
+        enableDamping
+        autoRotate={autoRotate}
+        autoRotateSpeed={0.55}
         minDistance={4}
         maxDistance={40}
         minPolarAngle={0.04}
@@ -353,28 +357,28 @@ function Scene({ step, danger, preset, onHit }) {
       <CameraRig preset={preset} controlsRef={controlsRef} />
 
       {/* labels */}
-      {step >= 2 && (
+      {labels && step >= 2 && (
         <Html position={[-1.4, 1.5, -13.5]} center className="pointer-events-none">
           <span className="whitespace-nowrap rounded-full border border-[#ff8d90]/40 bg-[#25191b]/90 px-3 py-1 text-[11.5px] font-bold text-[#ffb4b6]">
             안전삼각대 · 차량 뒤 100m 지점
           </span>
         </Html>
       )}
-      {personsOut && !danger && (
+      {labels && personsOut && !danger && (
         <Html position={[5.1, 2.2, 1.5]} center className="pointer-events-none">
           <span className="whitespace-nowrap rounded-full border border-greenink/40 bg-[#0f2018]/90 px-3 py-1 text-[11.5px] font-bold text-[#7fe0af]">
             가드레일 밖 대피 · 안전
           </span>
         </Html>
       )}
-      {personsOut && danger && (
+      {labels && personsOut && danger && (
         <Html position={[0.8, 2.2, 0.3]} center className="pointer-events-none">
           <span className="whitespace-nowrap rounded-full border border-[#ff4d4d]/50 bg-[#25191b]/95 px-3 py-1 text-[11.5px] font-bold text-[#ff9a9c]">
             차로 위 대기 · 위험
           </span>
         </Html>
       )}
-      {beacon && (
+      {labels && beacon && (
         <Html position={danger ? [0.8, 3.2, 0.3] : [5.1, 3.2, 1.5]} center className="pointer-events-none">
           <span className="whitespace-nowrap rounded-full bg-accent px-3 py-1 text-[11.5px] font-bold text-white">
             112 · 119 신고
@@ -385,7 +389,16 @@ function Scene({ step, danger, preset, onHit }) {
   )
 }
 
-export default function Scene3D({ step = 0, danger = false, preset = 'total', onHit = () => {} }) {
+export default function Scene3D({
+  step = 0,
+  danger = false,
+  preset = 'total',
+  onHit = () => {},
+  active = true,
+  autoRotate = false,
+  labels = true,
+  dpr = [1, 1.75],
+}) {
   const [ready, setReady] = useState(false)
   useEffect(() => {
     const id = window.setTimeout(() => setReady(true), 30)
@@ -393,12 +406,15 @@ export default function Scene3D({ step = 0, danger = false, preset = 'total', on
   }, [])
   return (
     <Canvas
-      dpr={[1, 1.75]}
-      camera={{ position: PRESETS.total.pos, fov: 42, near: 0.1, far: 200 }}
+      dpr={dpr}
+      frameloop={active ? 'always' : 'never'}
+      camera={{ position: PRESETS[preset] ? PRESETS[preset].pos : PRESETS.total.pos, fov: 42, near: 0.1, far: 200 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       aria-label="교통사고 대처 3D 시뮬레이션"
     >
-      {ready && <Scene step={step} danger={danger} preset={preset} onHit={onHit} />}
+      {ready && (
+        <Scene step={step} danger={danger} preset={preset} onHit={onHit} autoRotate={autoRotate} labels={labels} />
+      )}
     </Canvas>
   )
 }

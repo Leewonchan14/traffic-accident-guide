@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
 import {
   ArrowCounterClockwiseIcon,
@@ -7,6 +7,7 @@ import {
   PlayIcon,
   WarningIcon,
 } from '@phosphor-icons/react'
+import SceneBoundary from './SceneBoundary.jsx'
 import SectionHead from './SectionHead.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -49,23 +50,6 @@ const CAMERAS = [
   ['back', '후방 뷰'],
   ['top', '탑 뷰'],
 ]
-
-class SceneBoundary extends Component {
-  state = { failed: false }
-  static getDerivedStateFromError() {
-    return { failed: true }
-  }
-  render() {
-    if (this.state.failed) {
-      return (
-        <div className="flex h-full items-center justify-center p-8 text-center text-[14.5px] text-[#aeb7c2]">
-          이 브라우저에서는 3D 장면을 표시할 수 없습니다. 위의 조치 순서와 텍스트 안내를 참고하세요.
-        </div>
-      )
-    }
-    return this.props.children
-  }
-}
 
 export default function Simulator3D() {
   const reduce = useReducedMotion()
@@ -112,7 +96,7 @@ export default function Simulator3D() {
         />
 
         <div className="grid gap-3.5 lg:grid-cols-[1.55fr_1fr]">
-          <Reveal>
+          <Reveal className="min-w-0">
             <div
               ref={stageRef}
               className="relative overflow-hidden rounded-[18px] border border-inkline bg-[#0d1117]"
@@ -127,7 +111,7 @@ export default function Simulator3D() {
                       </div>
                     }
                   >
-                    <Scene3D step={step} danger={danger} preset={preset} onHit={onHit} />
+                    <Scene3D step={step} danger={danger} preset={preset} onHit={onHit} active={inView} />
                   </Suspense>
                 </SceneBoundary>
               </div>
@@ -186,7 +170,7 @@ export default function Simulator3D() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.07}>
+          <Reveal delay={0.07} className="min-w-0">
             <div className="flex h-full flex-col rounded-[18px] border border-inkline bg-inksoft p-5 md:p-6">
               <ol className="m-0 grid list-none gap-2 p-0">
                 {STEPS.map((s, i) => (
