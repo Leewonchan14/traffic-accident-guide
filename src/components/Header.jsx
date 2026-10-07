@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { motion, useScroll, useSpring } from 'motion/react'
-import { Phone } from '@phosphor-icons/react'
+import { PhoneIcon } from '@phosphor-icons/react'
 import { scrollToId } from '../utils.js'
 
 const NAV = [
   ['diagnose', '상황 진단'],
   ['immediate', '즉시 조치'],
   ['highway', '고속도로'],
+  ['simulator', '3D 시뮬레이터'],
   ['evidence', '사진·증거'],
   ['never', '주의사항'],
   ['after', '이후 절차'],
@@ -71,7 +72,7 @@ export default function Header() {
 
         <div className="ml-auto flex items-center gap-2">
           <a className="btn btn-sm btn-accent" href="tel:119">
-            <Phone weight="fill" size={14} aria-hidden="true" />
+            <PhoneIcon weight="fill" size={14} aria-hidden="true" />
             119 구급
           </a>
           <a className="btn btn-sm btn-ghost" href="tel:112">112 경찰</a>

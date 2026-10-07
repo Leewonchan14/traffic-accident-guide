@@ -3,6 +3,7 @@ import Hero from './components/Hero.jsx'
 import Diagnose from './components/Diagnose.jsx'
 import Immediate from './components/Immediate.jsx'
 import Highway from './components/Highway.jsx'
+import Simulator3D from './components/Simulator3D.jsx'
 import Evidence from './components/Evidence.jsx'
 import Never from './components/Never.jsx'
 import AfterFlow from './components/AfterFlow.jsx'
@@ -20,6 +21,7 @@ export default function App() {
         <Diagnose />
         <Immediate />
         <Highway />
+        <Simulator3D />
         <Evidence />
         <Never />
         <AfterFlow />
