@@ -109,10 +109,12 @@ export default function Diagnose() {
                   initial={reduce ? false : { opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={reduce ? undefined : { opacity: 0 }}
-                  className="flex min-h-16 items-center gap-2 text-[15.5px] text-muted"
+                  className="flex min-h-16 items-center text-[15.5px] text-muted"
                 >
-                  질문에 답하면 맞춤 조치가 여기에 표시됩니다. 남은 질문:
-                  <b className="text-ink">{Q_KEYS.length - answered}</b>개
+                  <span>
+                    질문에 답하면 맞춤 조치가 여기에 표시됩니다. 남은 질문:{' '}
+                    <b className="text-ink">{Q_KEYS.length - answered}</b>개
+                  </span>
                 </motion.p>
               ) : (
                 <motion.div
