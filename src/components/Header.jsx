@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, useScroll, useSpring } from 'motion/react'
 import { PhoneIcon } from '@phosphor-icons/react'
-import { scrollToId } from '../utils.js'
+import { scrollToId, supportsScrollTimeline } from '../utils.js'
 
 const NAV = [
   ['diagnose', '상황 진단'],
@@ -35,10 +35,21 @@ function useActiveSection() {
   return active
 }
 
-export default function Header() {
+/* Reading progress: compositor-driven CSS scroll timeline where available,
+   spring + scroll listener only as the Firefox fallback. */
+function CssProgress() {
+  return <div aria-hidden="true" className="sd-progress h-[2px] bg-accent" />
+}
+
+function JsProgress() {
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 })
+  return <motion.div aria-hidden="true" style={{ scaleX: progress }} className="h-[2px] origin-left bg-accent" />
+}
+
+export default function Header() {
   const active = useActiveSection()
+  const cssTimeline = supportsScrollTimeline()
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-md">
@@ -78,11 +89,7 @@ export default function Header() {
           <a className="btn btn-sm btn-ghost" href="tel:112">112 경찰</a>
         </div>
       </div>
-      <motion.div
-        aria-hidden="true"
-        style={{ scaleX: progress }}
-        className="h-[2px] origin-left bg-accent"
-      />
+      {cssTimeline ? <CssProgress /> : <JsProgress />}
     </header>
   )
 }

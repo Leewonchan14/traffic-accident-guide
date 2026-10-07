@@ -10,6 +10,7 @@ import {
 import SceneBoundary from './SceneBoundary.jsx'
 import SectionHead from './SectionHead.jsx'
 import Reveal from './Reveal.jsx'
+import { withViewTransition } from '../utils.js'
 
 const Scene3D = lazy(() => import('./Scene3D.jsx'))
 
@@ -85,10 +86,11 @@ export default function Simulator3D() {
   const desc = danger && step === 3 && current.dDanger ? current.dDanger : current.d
 
   return (
-    <section id="simulator" aria-labelledby="simulator-title" className="bg-ink py-16 text-[#eef1f5] md:py-24">
+    <section id="simulator" aria-labelledby="simulator-title" className="sec sec-dark">
       <div className="wrap">
         <SectionHead
           dark
+          index="04"
           id="simulator-title"
           kicker="3D 시뮬레이터"
           title="행동을 순서대로, 눈으로 확인하세요"
@@ -158,7 +160,7 @@ export default function Simulator3D() {
                   type="button"
                   onClick={() => setPreset(key)}
                   aria-pressed={preset === key}
-                  className={`rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+                  className={`rounded-full border px-3.5 py-1.5 text-[14px] font-semibold transition-colors ${
                     preset === key
                       ? 'border-white/50 bg-white/15 text-white'
                       : 'border-inkline text-[#aeb7c2] hover:border-white/30 hover:text-white'
@@ -177,10 +179,12 @@ export default function Simulator3D() {
                   <li key={s.t}>
                     <button
                       type="button"
-                      onClick={() => {
-                        setStep(i)
-                        setPlaying(false)
-                      }}
+                      onClick={() =>
+                        withViewTransition(() => {
+                          setStep(i)
+                          setPlaying(false)
+                        })
+                      }
                       aria-current={step === i ? 'step' : undefined}
                       className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-colors ${
                         step === i
@@ -195,7 +199,7 @@ export default function Simulator3D() {
                       >
                         {i + 1}
                       </span>
-                      <span className={`text-[14.5px] font-bold ${step === i ? 'text-white' : 'text-[#c3cad3]'}`}>
+                      <span className={`text-[16px] font-bold tracking-[-0.01em] ${step === i ? 'text-white' : 'text-[#c3cad3]'}`}>
                         {s.t}
                       </span>
                     </button>
@@ -206,9 +210,9 @@ export default function Simulator3D() {
               <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#2a323c]">
                 <motion.div
                   key={`${step}-${playing}-${inView}`}
-                  className="h-full rounded-full bg-accent"
-                  initial={{ width: playing && inView ? '0%' : '100%' }}
-                  animate={{ width: '100%' }}
+                  className="h-full w-full origin-left rounded-full bg-accent"
+                  initial={{ scaleX: playing && inView ? 0 : 1 }}
+                  animate={{ scaleX: 1 }}
                   transition={{ duration: playing && inView ? STEP_MS / 1000 : 0.3, ease: 'linear' }}
                 />
               </div>
@@ -231,7 +235,7 @@ export default function Simulator3D() {
                 </button>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-4 py-2 text-[13.5px] font-bold text-[#c3cad3] transition-colors hover:border-white/60 hover:text-white active:translate-y-px"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-4 py-2 text-[14.5px] font-bold text-[#c3cad3] transition-colors hover:border-white/60 hover:text-white active:translate-y-px"
                   onClick={() => {
                     setStep(0)
                     setPlaying(false)
@@ -249,9 +253,9 @@ export default function Simulator3D() {
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setDanger(false)}
+                    onClick={() => withViewTransition(() => setDanger(false))}
                     aria-pressed={!danger}
-                    className={`rounded-xl border px-3 py-2.5 text-[13.5px] font-bold transition-colors ${
+                    className={`rounded-xl border px-3 py-2.5 text-[14.5px] font-bold transition-colors ${
                       !danger
                         ? 'border-greenink/60 bg-greenink/20 text-[#8fe6b8]'
                         : 'border-inkline text-[#aeb7c2] hover:border-white/30'
@@ -261,13 +265,15 @@ export default function Simulator3D() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setDanger(true)
-                      if (step < 3) setStep(3)
-                      setPlaying(false)
-                    }}
+                    onClick={() =>
+                      withViewTransition(() => {
+                        setDanger(true)
+                        if (step < 3) setStep(3)
+                        setPlaying(false)
+                      })
+                    }
                     aria-pressed={danger}
-                    className={`rounded-xl border px-3 py-2.5 text-[13.5px] font-bold transition-colors ${
+                    className={`rounded-xl border px-3 py-2.5 text-[14.5px] font-bold transition-colors ${
                       danger
                         ? 'border-[#ff4d4d]/60 bg-[#ff4d4d]/20 text-[#ff9a9c]'
                         : 'border-inkline text-[#aeb7c2] hover:border-white/30'
@@ -276,16 +282,19 @@ export default function Simulator3D() {
                     위험: 차로 대기
                   </button>
                 </div>
-                <p className="mt-3 text-[13px] leading-relaxed text-[#aeb7c2]">
+                <p className="mt-3 text-[14px] leading-relaxed text-[#aeb7c2]">
                   위험 시나리오를 켜면 대피 단계에서 탑승자가 차로에 남아 있고, 후속 차량이 그대로 접근하는
                   장면을 볼 수 있습니다.
                 </p>
               </div>
 
-              <div className="mt-5 flex-1 rounded-xl border border-inkline bg-[#161b22] p-4">
-                <div className="text-[14.5px] font-bold text-white">{current.t}</div>
-                <p className="mt-1.5 text-[13.5px] leading-relaxed text-[#aeb7c2]">{desc}</p>
-                <span className="mt-2.5 block text-[12px] text-[#7c8694]">{current.law}</span>
+              <div
+                className="mt-5 flex-1 rounded-xl border border-inkline bg-[#161b22] p-4"
+                style={{ viewTransitionName: 'sim-desc' }}
+              >
+                <div className="text-[18px] font-bold tracking-[-0.02em] text-white md:text-[19px]">{current.t}</div>
+                <p className="mt-2 text-[15px] leading-relaxed text-[#aeb7c2]">{desc}</p>
+                <span className="mt-3 block text-[13px] text-[#7c8694]">{current.law}</span>
               </div>
             </div>
           </Reveal>

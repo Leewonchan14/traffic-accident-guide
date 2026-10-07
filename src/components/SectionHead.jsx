@@ -1,20 +1,35 @@
-export default function SectionHead({ kicker, title, lede, dark = false, id }) {
+/* 섹션 헤더: 챕터 번호 + 헤어라인 + 큰 제목 (하이브리드 아트 디렉션) */
+export default function SectionHead({ kicker, title, lede, dark = false, id, index }) {
   return (
-    <div className="mb-11 max-w-[720px]">
-      <span className={dark ? 'text-[12.5px] font-bold uppercase tracking-[0.14em] text-[#ff8d90]' : 'kicker'}>
-        {kicker}
-      </span>
-      <h2
-        id={id}
-        className={`mt-3.5 text-[clamp(1.7rem,3.4vw,2.35rem)] font-extrabold leading-[1.22] ${
-          dark ? 'text-white' : 'text-ink'
-        }`}
-      >
-        {title}
-      </h2>
-      {lede && (
-        <p className={`mt-3.5 text-[17px] ${dark ? 'text-[#aeb7c2]' : 'text-muted'}`}>{lede}</p>
-      )}
+    <div className="mb-14 md:mb-16">
+      <div className={`flex items-baseline gap-4 ${dark ? 'rule-dark' : 'rule'} border-t pt-4`}>
+        {index && (
+          <span
+            className={`text-[12.5px] font-extrabold tabular-nums tracking-[0.1em] ${
+              dark ? 'text-[#ff8d90]' : 'text-accent'
+            }`}
+          >
+            {index}
+          </span>
+        )}
+        <span className={`eyebrow ${dark ? 'text-[#aeb7c2]' : 'text-muted2'}`}>{kicker}</span>
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-10">
+        <h2
+          id={id}
+          className={`max-w-[22ch] text-[clamp(30px,3.6vw,52px)] font-extrabold leading-[1.08] tracking-[-0.035em] ${
+            dark ? 'text-white' : 'text-ink'
+          }`}
+        >
+          {title}
+        </h2>
+        {lede && (
+          <p className={`max-w-[46ch] text-[17px] leading-relaxed md:text-[18px] ${dark ? 'text-[#aeb7c2]' : 'text-muted'}`}>
+            {lede}
+          </p>
+        )}
+      </div>
     </div>
   )
 }

@@ -21,22 +21,25 @@ const SOURCES = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line bg-surface pb-16 pt-14 text-[14px] text-muted">
+    <footer className="bg-ink pb-20 pt-16 text-[15px] text-[#aeb7c2] md:pb-16 md:pt-20">
       <div className="wrap">
-        <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-10 border-t border-white/10 pt-10 md:grid-cols-[1.1fr_0.9fr] md:gap-14">
           <div>
-            <h3 className="mb-3.5 text-[12px] font-bold uppercase tracking-[0.08em] text-muted2">
-              근거 법령·출처
-            </h3>
+            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.14em] text-[#7c8694]">근거 법령·출처</h3>
             <ul className="m-0 list-none p-0">
               {SOURCES.map((s) => (
-                <li key={s.t} className="my-2">
+                <li key={s.t} className="my-2.5">
                   {s.t}
                   {s.href && (
                     <>
                       {' '}
                       ·{' '}
-                      <a href={s.href} target="_blank" rel="noopener noreferrer">
+                      <a
+                        className="text-white underline decoration-white/30 underline-offset-2 hover:decoration-white"
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {s.label}
                       </a>
                     </>
@@ -45,18 +48,18 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          <div>
-            <h3 className="mb-3.5 text-[12px] font-bold uppercase tracking-[0.08em] text-muted2">
+          <div className="md:border-l md:border-white/10 md:pl-14">
+            <h3 className="mb-4 text-[12px] font-bold uppercase tracking-[0.14em] text-[#7c8694]">
               이 페이지 정보
             </h3>
             <ul className="m-0 list-none p-0">
-              <li className="my-2">기준 법령 확인일: 2026년 10월</li>
-              <li className="my-2">법령은 개정될 수 있으므로 처벌·의무 내용은 최신 법령 확인 필요</li>
-              <li className="my-2">체크리스트는 이 브라우저에만 저장되며 외부로 전송되지 않습니다</li>
+              <li className="my-2.5">기준 법령 확인일: 2026년 10월</li>
+              <li className="my-2.5">법령은 개정될 수 있으므로 처벌·의무 내용은 최신 법령 확인 필요</li>
+              <li className="my-2.5">체크리스트는 이 브라우저에만 저장되며 외부로 전송되지 않습니다</li>
             </ul>
           </div>
         </div>
-        <p className="mt-8 max-w-[76ch] border-t border-line pt-5 text-[13px] text-muted2">
+        <p className="mt-10 max-w-[76ch] border-t border-white/10 pt-6 text-[13.5px] text-[#7c8694]">
           이 페이지는 일반적인 정보 제공을 목적으로 하며 법률 자문이 아닙니다. 사고의 구체적인 상황(과실, 부상
           정도, 보험 가입 조건)에 따라 결론이 달라질 수 있으니, 실제 사안은 경찰, 보험사, 변호사와 상담하세요.
         </p>

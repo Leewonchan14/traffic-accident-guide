@@ -14,7 +14,12 @@ function CountUp({ to, suffix = '', className = '' }) {
       ease: [0.2, 0.8, 0.2, 1],
       onUpdate: (v) => setVal(Math.round(v)),
     })
-    return () => controls.stop()
+    /* 프레임이 밀리면 수치가 0에 머무르므로, 시간이 지나면 최종값으로 확정합니다. */
+    const settle = window.setTimeout(() => setVal(to), 1500)
+    return () => {
+      controls.stop()
+      window.clearTimeout(settle)
+    }
   }, [inView, to])
   return (
     <span ref={ref} className={className}>
@@ -47,10 +52,11 @@ const BTP = [
 
 export default function Highway() {
   return (
-    <section id="highway" aria-labelledby="highway-title" className="bg-ink py-16 text-[#eef1f5] md:py-24">
+    <section id="highway" aria-labelledby="highway-title" className="sec sec-dark">
       <div className="wrap">
         <SectionHead
           dark
+          index="03"
           id="highway-title"
           kicker="고속도로"
           title="고속도로에서는 순서가 생사를 가릅니다"
@@ -65,8 +71,8 @@ export default function Highway() {
                   <span className="text-[#ff8d90]">{c.letter}</span>
                   {c.short}
                 </div>
-                <h3 className="mt-4 text-[17.5px] font-bold text-white">{c.t}</h3>
-                <p className="mt-2.5 text-[14.5px] text-[#aeb7c2]">{c.d}</p>
+                <h3 className="mt-5 text-[19px] font-bold tracking-[-0.02em] text-white md:text-[21px]">{c.t}</h3>
+                <p className="mt-3 text-[15.5px] leading-relaxed text-[#aeb7c2]">{c.d}</p>
               </div>
             </Reveal>
           ))}
@@ -75,8 +81,8 @@ export default function Highway() {
         <div className="mt-3.5 grid gap-3.5 lg:grid-cols-[1.2fr_0.8fr]">
           <Reveal>
             <div className="h-full rounded-[18px] border border-inkline bg-inksoft p-6">
-              <h3 className="text-[16.5px] font-bold text-white">안전삼각대, 어디에 세우나</h3>
-              <ul className="mt-3 list-disc pl-4 text-[14.5px] leading-relaxed text-[#c3cad3]">
+              <h3 className="text-[19px] font-bold tracking-[-0.02em] text-white md:text-[20px]">안전삼각대, 어디에 세우나</h3>
+              <ul className="mt-3 list-disc pl-4 text-[15.5px] leading-relaxed text-[#c3cad3]">
                 <li className="my-2">
                   차량 뒤쪽 <b className="text-white">100m 지점</b>에 세우는 것이 안내 기준입니다. 후방에서
                   접근하는 운전자가 확인할 수 있는 위치라야 합니다.
@@ -94,8 +100,8 @@ export default function Highway() {
           </Reveal>
           <Reveal delay={0.07}>
             <div className="h-full rounded-[18px] border border-inkline bg-inksoft p-6">
-              <h3 className="text-[16.5px] font-bold text-white">차를 옮길 수 없다면</h3>
-              <ul className="mt-3 list-disc pl-4 text-[14.5px] leading-relaxed text-[#c3cad3]">
+              <h3 className="text-[19px] font-bold tracking-[-0.02em] text-white md:text-[20px]">차를 옮길 수 없다면</h3>
+              <ul className="mt-3 list-disc pl-4 text-[15.5px] leading-relaxed text-[#c3cad3]">
                 <li className="my-2">
                   도로공사 <b className="text-white">무료 긴급견인(1588-2504)</b>은 본선·갓길 위 위험 차량을
                   가까운 휴게소·졸음쉼터 등 안전지대로 옮겨 줍니다.
@@ -110,14 +116,14 @@ export default function Highway() {
         <Reveal className="mt-3.5">
           <div className="rounded-[18px] border border-[#5c3a3d] bg-[#25191b] p-6">
             <h3 className="text-[16.5px] font-bold text-[#ff8d90]">절대 하지 말 것</h3>
-            <ul className="mt-3 list-disc pl-4 text-[14.5px] leading-relaxed text-[#e8c9cb]">
+            <ul className="mt-3 list-disc pl-4 text-[15.5px] leading-relaxed text-[#e8c9cb]">
               <li className="my-2">차 안에 앉아 대기하기, 갓길에 서 있기</li>
               <li className="my-2">차로 위에서 사진 찍기, 상대 운전자와 실랑이하기</li>
               <li className="my-2">표지 없이 차만 세워 두고 떠나기</li>
             </ul>
-            <div className="mt-5 text-[30px] font-extrabold tracking-[-0.03em] text-white">
+            <div className="mt-6 text-[clamp(38px,4.4vw,58px)] font-extrabold tracking-[-0.04em] text-white">
               약 <CountUp to={20} suffix="%" />
-              <small className="ml-2 text-[13.5px] font-semibold tracking-normal text-[#aeb7c2]">
+              <small className="ml-3 text-[14px] font-semibold tracking-normal text-[#aeb7c2]">
                 고속도로 2차 사고 치명률
               </small>
             </div>

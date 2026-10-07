@@ -5,6 +5,7 @@ import { CHECKLIST } from '../data.jsx'
 import SceneBoundary from './SceneBoundary.jsx'
 import SectionHead from './SectionHead.jsx'
 import Reveal from './Reveal.jsx'
+import { withViewTransition } from '../utils.js'
 
 const PhotoScene = lazy(() => import('./PhotoScene.jsx'))
 const STORE_KEY = 'ta-checklist-v2'
@@ -46,19 +47,21 @@ export default function Evidence() {
     }
   }, [done])
 
-  const toggle = (key, index) => {
-    setDone((d) => (d.includes(key) ? d.filter((k) => k !== key) : [...d, key]))
-    setShotIdx(index)
-  }
+  const toggle = (key, index) =>
+    withViewTransition(() => {
+      setDone((d) => (d.includes(key) ? d.filter((k) => k !== key) : [...d, key]))
+      setShotIdx(index)
+    })
 
   const count = done.length
   const pct = Math.round((count / CHECKLIST.length) * 100)
   const current = CHECKLIST[shotIdx]
 
   return (
-    <section id="evidence" aria-labelledby="evidence-title" className="border-y border-line bg-surface py-16 md:py-24">
+    <section id="evidence" aria-labelledby="evidence-title" className="sec sec-white">
       <div className="wrap">
         <SectionHead
+          index="05"
           id="evidence-title"
           kicker="사진·증거 체크리스트"
           title="어디서, 무엇을 찍어야 하는지까지 확인하세요"
@@ -75,8 +78,8 @@ export default function Evidence() {
             className="h-2.5 min-w-[200px] flex-1 overflow-hidden rounded-full bg-line"
           >
             <motion.div
-              className="h-full rounded-full bg-greenink"
-              animate={{ width: `${pct}%` }}
+              className="h-full w-full origin-left rounded-full bg-greenink"
+              animate={{ scaleX: pct / 100 }}
               transition={{ type: 'spring', stiffness: 160, damping: 24 }}
             />
           </div>
@@ -95,7 +98,12 @@ export default function Evidence() {
                 {seen ? (
                   <SceneBoundary>
                     <Suspense fallback={<StageLoading />}>
-                      <PhotoScene variant="overview" shotIndex={shotIdx} onSelect={setShotIdx} active={inView} />
+                      <PhotoScene
+                        variant="overview"
+                        shotIndex={shotIdx}
+                        onSelect={(i) => withViewTransition(() => setShotIdx(i))}
+                        active={inView}
+                      />
                     </Suspense>
                   </SceneBoundary>
                 ) : (
@@ -151,7 +159,7 @@ export default function Evidence() {
                 )}
               </div>
 
-              <div className="card flex-1 p-4 md:p-5">
+              <div className="card flex-1 p-4 md:p-5" style={{ viewTransitionName: 'photo-caption' }}>
                 <div className="text-[11.5px] font-bold uppercase tracking-[0.08em] text-muted2">현재 시점</div>
                 <b className="mt-1.5 block text-[16px]">{current.t}</b>
                 <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted">{current.d}</p>
@@ -171,7 +179,7 @@ export default function Evidence() {
                   whileTap={{ scale: 0.99 }}
                   aria-pressed={on}
                   onClick={() => toggle(c.key, i)}
-                  className={`grid w-full grid-cols-[26px_1fr] items-start gap-3.5 rounded-[18px] border p-5 text-left transition-colors ${
+                  className={`grid w-full grid-cols-[26px_1fr] items-start gap-3.5 rounded-xl border p-5 text-left transition-colors ${
                     on ? 'border-greenink/35 bg-greentint' : 'border-line bg-paper hover:border-linestrong'
                   } ${sel ? 'ring-2 ring-accent/60' : ''}`}
                 >
@@ -188,8 +196,8 @@ export default function Evidence() {
                     />
                   </span>
                   <span>
-                    <b className="text-[16px]">{c.t}</b>
-                    <small className="mt-1 block text-[13.5px] text-muted">{c.d}</small>
+                    <b className="text-[17.5px] tracking-[-0.02em] md:text-[18.5px]">{c.t}</b>
+                    <small className="mt-1.5 block text-[14.5px] leading-relaxed text-muted">{c.d}</small>
                   </span>
                 </motion.button>
               </Reveal>

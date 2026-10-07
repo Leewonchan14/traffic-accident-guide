@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { CheckIcon, PhoneIcon, WarningOctagonIcon } from '@phosphor-icons/react'
 import { CALLS, PLAN_QUESTIONS, buildPlan } from '../data.jsx'
 import SectionHead from './SectionHead.jsx'
@@ -9,8 +9,8 @@ const Q_KEYS = PLAN_QUESTIONS.map((q) => q.id)
 function QuestionRow({ q, index, selected, onSelect }) {
   const done = Boolean(selected)
   return (
-    <div className="grid items-center gap-3.5 border-b border-line px-5 py-6 last:border-b-0 md:grid-cols-[220px_1fr] md:gap-5 md:px-6.5">
-      <div className="flex items-center gap-2.5 text-[15.5px] font-bold">
+    <div className="grid items-center gap-3.5 border-t border-line px-0 py-7 last:border-b md:grid-cols-[240px_1fr] md:gap-6 md:py-8">
+      <div className="flex items-center gap-3 text-[17.5px] font-bold tracking-[-0.02em] md:text-[19px]">
         <span
           className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[11.5px] font-extrabold tabular-nums ${
             done ? 'bg-greenink text-white' : 'bg-ink text-white'
@@ -30,7 +30,7 @@ function QuestionRow({ q, index, selected, onSelect }) {
               whileTap={{ scale: 0.97 }}
               aria-pressed={isSel}
               onClick={() => onSelect(q.id, o.v)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-[15px] font-semibold transition-colors md:text-[15.5px] ${
                 isSel
                   ? 'border-ink bg-ink text-white'
                   : 'border-linestrong bg-surface text-ink hover:border-ink'
@@ -48,18 +48,16 @@ function QuestionRow({ q, index, selected, onSelect }) {
 
 function PlanStep({ step, i }) {
   return (
-    <motion.li
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, delay: i * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
-      className="grid grid-cols-[34px_1fr] gap-3.5 border-t border-line py-4 first:border-t-0 first:pt-1"
+    <li
+      style={{ animationDelay: `${i * 0.05}s` }}
+      className="plan-in grid grid-cols-[34px_1fr] gap-3.5 border-t border-line py-4 first:border-t-0 first:pt-1"
     >
       <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-accent text-[13.5px] font-extrabold tabular-nums text-white">
         {i + 1}
       </span>
       <div>
-        <b className="block text-[16px]">{step.t}</b>
-        <p className="mt-1 text-[14.5px] text-muted">{step.d}</p>
+        <b className="block text-[18px] tracking-[-0.02em] md:text-[19px]">{step.t}</b>
+        <p className="mt-1.5 text-[15.5px] text-muted">{step.d}</p>
         {step.tel && (
           <span className="mt-2.5 flex flex-wrap gap-2">
             {step.tel.map((c) => (
@@ -72,13 +70,12 @@ function PlanStep({ step, i }) {
         )}
         {step.law && <span className="law">{step.law}</span>}
       </div>
-    </motion.li>
+    </li>
   )
 }
 
 export default function Diagnose() {
   const [answers, setAnswers] = useState({})
-  const reduce = useReducedMotion()
   const answered = Q_KEYS.filter((k) => answers[k]).length
   const complete = answered === Q_KEYS.length
   const plan = complete ? buildPlan(answers) : null
@@ -87,69 +84,58 @@ export default function Diagnose() {
   const reset = () => setAnswers({})
 
   return (
-    <section id="diagnose" aria-labelledby="diagnose-title" className="border-y border-line bg-surface py-16 md:py-24">
+    <section id="diagnose" aria-labelledby="diagnose-title" className="sec sec-white">
       <div className="wrap">
         <SectionHead
+          index="01"
           id="diagnose-title"
           kicker="상황 진단"
           title="세 가지만 고르면, 지금 할 일이 나옵니다"
           lede="선택에 따라 신고 의무와 우선순위가 달라집니다. 결과는 도로교통법 조문 기준으로 구성됩니다."
         />
 
-        <div className="overflow-hidden rounded-[18px] border border-line bg-paper">
+        <div>
           {PLAN_QUESTIONS.map((q, i) => (
             <QuestionRow key={q.id} q={q} index={i} selected={answers[q.id]} onSelect={select} />
           ))}
 
-          <div className="border-t border-line bg-surface p-6 md:px-6.5" aria-live="polite">
-            <AnimatePresence mode="wait" initial={false}>
-              {!complete ? (
-                <motion.p
-                  key="hint"
-                  initial={reduce ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={reduce ? undefined : { opacity: 0 }}
-                  className="flex min-h-16 items-center text-[15.5px] text-muted"
-                >
-                  <span>
-                    질문에 답하면 맞춤 조치가 여기에 표시됩니다. 남은 질문:{' '}
-                    <b className="text-ink">{Q_KEYS.length - answered}</b>개
-                  </span>
-                </motion.p>
-              ) : (
-                <motion.div
-                  key={JSON.stringify(answers)}
-                  initial={reduce ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduce ? undefined : { opacity: 0, y: -6 }}
-                  transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <strong className="text-[16px]">지금 해야 할 일 {plan.steps.length}단계</strong>
-                    <button type="button" className="btn btn-sm btn-ghost" onClick={reset}>
-                      다시 선택
-                    </button>
+          <div className="border-t border-line py-8" aria-live="polite">
+            {!complete ? (
+              <p className="flex min-h-16 items-center text-[15.5px] text-muted">
+                <span>
+                  질문에 답하면 맞춤 조치가 여기에 표시됩니다. 남은 질문:{' '}
+                  <b className="text-ink">{Q_KEYS.length - answered}</b>개
+                </span>
+              </p>
+            ) : (
+              /* 등장은 CSS로만 처리합니다. JS 애니메이션 완료에 의존하면
+                 프레임이 밀리는 상황에서 결과가 늦게 뜨거나 비어 보일 수 있습니다. */
+              <div key={JSON.stringify(answers)} className="plan-in">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <strong className="text-[19px] tracking-[-0.02em]">지금 해야 할 일 {plan.steps.length}단계</strong>
+                  <button type="button" className="btn btn-sm btn-ghost" onClick={reset}>
+                    다시 선택
+                  </button>
+                </div>
+                {plan.alert && (
+                  <div
+                    className={`mt-4 flex gap-3 rounded-xl border p-4 text-[14.5px] leading-relaxed ${
+                      plan.alert.type === 'danger'
+                        ? 'border-accent/25 bg-accenttint text-accentdeep'
+                        : 'border-amberink/25 bg-ambertint text-amberink'
+                    }`}
+                  >
+                    <WarningOctagonIcon weight="fill" size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    <span>{plan.alert.text}</span>
                   </div>
-                  {plan.alert && (
-                    <div
-                      className={`mt-4 flex gap-3 rounded-xl border p-4 text-[14.5px] leading-relaxed ${
-                        plan.alert.type === 'danger'
-                          ? 'border-accent/25 bg-accenttint text-accentdeep'
-                          : 'border-amberink/25 bg-ambertint text-amberink'
-                      }`}
-                    >
-                      <WarningOctagonIcon weight="fill" size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
-                      <span>{plan.alert.text}</span>
-                    </div>
-                  )}
-                  <ol className="mt-5 list-none p-0">
-                    {plan.steps.map((s, i) => (
-                      <PlanStep key={s.t} step={s} i={i} />
-                    ))}
-                  </ol>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+                <ol className="mt-5 list-none p-0">
+                  {plan.steps.map((s, i) => (
+                    <PlanStep key={s.t} step={s} i={i} />
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
         </div>
 

@@ -89,6 +89,41 @@ p { text-wrap: pretty; }
   .acc-content[data-state="closed"] { animation: none; }
 }
 
+/* ============ Section rhythm (하이브리드: 라이트 본문 + 다크 챕터) ============ */
+.sec { @apply py-20 md:py-32; }
+.sec-light { @apply bg-paper; }
+.sec-white { @apply bg-surface; }
+.sec-dark { @apply bg-ink text-[#eef1f5]; }
+.rule { @apply border-t border-line; }
+.rule-dark { @apply border-t border-white/10; }
+
+/* ============ Display type scale (히어로 재설계용) ============ */
+.d1 {
+  font-size: clamp(40px, 7.4vw, 104px);
+  line-height: 0.97;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+}
+.d2 {
+  font-size: clamp(28px, 3.4vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+.d3 {
+  font-size: clamp(22px, 1.9vw, 30px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.hairline { border-color: var(--color-line); }
+
 /* ============ Hero road texture ============ */
 .lane-dash {
   height: 4px;
@@ -107,6 +142,77 @@ p { text-wrap: pretty; }
 }
 
 .src { @apply mt-3.5 block text-[12.8px] leading-relaxed text-muted2; }
+
+/* ============ CSS scroll-driven animations ============ */
+/* Chrome/Edge 115+, Safari 26+. Firefox ships no support yet, so components keep a JS path
+   (motion / GSAP) and only use these classes when CSS.supports('animation-timeline: scroll()'). */
+@supports (animation-timeline: scroll()) {
+  .sd-progress {
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    animation: sd-progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+  .sd-reveal {
+    animation: sd-reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+@keyframes sd-progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes sd-reveal-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sd-progress, .sd-reveal { animation: none; }
+}
+
+/* ============ View transitions ============ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-group(sim-desc),
+::view-transition-group(photo-caption),
+::view-transition-group(copy-state) {
+  animation-duration: 0.28s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ============ Plan reveal (위저드 결과) ============ */
+/* JS·합성 애니메이션에 의존하지 않는 등장. opacity를 0에서 시작하지 않으므로
+   프레임이 밀려도 결과가 즉시 읽힙니다(최악의 경우 10px 어긋난 위치). */
+@keyframes plan-in {
+  from { transform: translateY(10px); }
+  to { transform: none; }
+}
+.plan-in { animation: plan-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .plan-in { animation: none; }
+}
+
+/* ============ Scroll story (이후 절차) ============ */
+.flow-stage {
+  position: sticky;
+  top: 88px;
+}
+.flow-steps[data-pinned='true'] [data-flow-step] {
+  min-height: 46vh;
+  opacity: 0;
+  pointer-events: none;
+}
 
 @media (max-width: 767px) {
   body { padding-bottom: 78px; }
