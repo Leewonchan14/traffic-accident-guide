@@ -298,6 +298,22 @@ export const CONTACTS = [
   { name: '캐롯손해보험', num: '1566-0300', tel: '15660300', use: '사고 접수·긴급출동' },
 ]
 
+/* Evidence-photo camera positions for the 3D photo guide.
+   pos/target are scene coordinates (1 unit = 1 m), fov approximates a phone camera. */
+export const SHOTS = {
+  c1: { label: '전경', pos: [-7.4, 1.8, -9], target: [-1.4, 0.8, 2.6], fov: 58 },
+  c2: { label: '충돌부위', pos: [-3.9, 1.25, 2.2], target: [-1.45, 0.75, 2.8], fov: 50 },
+  c3: { label: '번호판', pos: [-1.6, 1.2, 10.2], target: [-1.5, 0.62, 7.75], fov: 45 },
+  c4: { label: '차선·표지', pos: [-7, 4.2, 9], target: [-1.8, 0.3, 1.0], fov: 62 },
+  c5: { label: '바닥 흔적', pos: [-1.2, 2.8, -2.0], target: [-1.4, 0.05, -6.0], fov: 55 },
+  c6: { label: '상대 운전자', pos: [-4.6, 1.6, 4.4], target: [-2.45, 1.15, 5.3], fov: 50 },
+  c7: { label: '블랙박스', pos: [-1.4, 1.6, 1.3], target: [-1.5, 0.85, 4.6], fov: 68 },
+  c8: { label: '목격자', pos: [1.2, 1.5, -6.2], target: [2.6, 1.05, -3.5], fov: 50 },
+}
+
+/* A witness stands on the shoulder in the photo scene (item c8). */
+export const WITNESS_POS = [2.6, 0, -3.5]
+
 export const FAQS = [
   {
     q: '가벼운 접촉사고인데 경찰에 꼭 신고해야 하나요?',
