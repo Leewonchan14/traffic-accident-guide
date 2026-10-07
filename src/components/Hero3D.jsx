@@ -18,10 +18,10 @@ export default function Hero3D() {
   const inView = useInView(ref, { margin: '-10% 0px' })
 
   useEffect(() => {
-    if (reduce || !playing || !inView) return
+    if (!playing || !inView) return
     const id = window.setTimeout(() => setStep((s) => (s + 1) % HERO_STEPS.length), DURATION[step])
     return () => window.clearTimeout(id)
-  }, [step, playing, inView, reduce])
+  }, [step, playing, inView])
 
   /* manual navigation always stops the auto loop so the scene can be inspected */
   const go = (delta) => {
